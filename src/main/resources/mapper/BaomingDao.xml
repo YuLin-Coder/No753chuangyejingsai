@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.BaomingDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.bianhao as bianhao
+        ,a.chuangyexiangmu_id as chuangyexiangmuId
+        ,a.yonghu_id as yonghuId
+        ,a.baoming_phone as baomingPhone
+        ,a.insert_time as insertTime
+        ,a.jiaoshi_id as jiaoshiId
+        ,a.baoming_types as baomingTypes
+        ,a.baoming_pingfen as baomingPingfen
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.BaomingView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,chuangyexiangmu.chuangyexiangmu_name as chuangyexiangmuName
+        ,chuangyexiangmu.jiaoshi_id as jiaoshiId
+        ,chuangyexiangmu.chuangyexiangmu_photo as chuangyexiangmuPhoto
+        ,chuangyexiangmu.leix_types as leixTypes
+        ,chuangyexiangmu.chuangyexiangmu_content as chuangyexiangmuContent
+        ,jiaoshi.username as username
+        ,jiaoshi.password as password
+        ,jiaoshi.jiaoshi_name as jiaoshiName
+        ,jiaoshi.sex_types as sexTypes
+        ,jiaoshi.jiaoshi_id_number as jiaoshiIdNumber
+        ,jiaoshi.jiaoshi_phone as jiaoshiPhone
+        ,jiaoshi.jiaoshi_photo as jiaoshiPhoto
+        ,yonghu.username as username
+        ,yonghu.password as password
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_photo as yonghuPhoto
+
+        FROM baoming  a
+        left JOIN chuangyexiangmu chuangyexiangmu ON a.chuangyexiangmu_id = chuangyexiangmu.id
+        left JOIN jiaoshi jiaoshi ON a.jiaoshi_id = jiaoshi.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test=" params.bianhao != '' and params.bianhao != null and params.bianhao != 'null' ">
+                and a.bianhao like CONCAT('%',#{params.bianhao},'%')
+            </if>
+            <if test="params.chuangyexiangmuId != null">
+                and a.chuangyexiangmu_id = #{params.chuangyexiangmuId}
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.baomingPhone != '' and params.baomingPhone != null and params.baomingPhone != 'null' ">
+                and a.baoming_phone like CONCAT('%',#{params.baomingPhone},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.insertTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.insertTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test="params.jiaoshiId != null">
+                and a.jiaoshi_id = #{params.jiaoshiId}
+            </if>
+            <if test="params.baomingTypes != null">
+                and a.baoming_types = #{params.baomingTypes}
+            </if>
+            <if test="params.baomingPingfenStart != null">
+                <![CDATA[  and a.baoming_pingfen >= #{params.baomingPingfenStart}   ]]>
+            </if>
+            <if test="params.baomingPingfenEnd != null">
+                <![CDATA[  and a.baoming_pingfen <= #{params.baomingPingfenEnd}   ]]>
+            </if>
+
+            <if test=" params.chuangyexiangmuName != '' and params.chuangyexiangmuName != null and params.chuangyexiangmuName != 'null' ">
+                and chuangyexiangmu.chuangyexiangmu_name like CONCAT('%',#{params.chuangyexiangmuName},'%')
+            </if>
+            <if test="params.jiaoshiId != null">
+                and chuangyexiangmu.jiaoshi_id = #{params.jiaoshiId}
+            </if>
+            <if test="params.leixTypes != null">
+                and chuangyexiangmu.leix_types = #{params.leixTypes}
+            </if>
+
+            <if test=" params.chuangyexiangmuContent != '' and params.chuangyexiangmuContent != null and params.chuangyexiangmuContent != 'null' ">
+                and chuangyexiangmu.chuangyexiangmu_content like CONCAT('%',#{params.chuangyexiangmuContent},'%')
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and jiaoshi.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and jiaoshi.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.jiaoshiName != '' and params.jiaoshiName != null and params.jiaoshiName != 'null' ">
+                and jiaoshi.jiaoshi_name like CONCAT('%',#{params.jiaoshiName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and jiaoshi.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.jiaoshiIdNumber != '' and params.jiaoshiIdNumber != null and params.jiaoshiIdNumber != 'null' ">
+                and jiaoshi.jiaoshi_id_number like CONCAT('%',#{params.jiaoshiIdNumber},'%')
+            </if>
+            <if test=" params.jiaoshiPhone != '' and params.jiaoshiPhone != null and params.jiaoshiPhone != 'null' ">
+                and jiaoshi.jiaoshi_phone like CONCAT('%',#{params.jiaoshiPhone},'%')
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and yonghu.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and yonghu.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

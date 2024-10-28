@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.HuojiangDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.huojiang_name as huojiangName
+        ,a.canyurenyuan as canyurenyuan
+        ,a.huojiang_photo as huojiangPhoto
+        ,a.huojiang_content as huojiangContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.HuojiangView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM huojiang  a
+
+        <where>
+            <if test=" params.huojiangName != '' and params.huojiangName != null and params.huojiangName != 'null' ">
+                and a.huojiang_name like CONCAT('%',#{params.huojiangName},'%')
+            </if>
+            <if test=" params.canyurenyuan != '' and params.canyurenyuan != null and params.canyurenyuan != 'null' ">
+                and a.canyurenyuan like CONCAT('%',#{params.canyurenyuan},'%')
+            </if>
+            <if test=" params.huojiangContent != '' and params.huojiangContent != null and params.huojiangContent != 'null' ">
+                and a.huojiang_content like CONCAT('%',#{params.huojiangContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>

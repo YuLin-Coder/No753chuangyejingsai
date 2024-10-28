@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChuangyeanliDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chuangyeanli_name as chuangyeanliName
+        ,a.leix_types as leixTypes
+        ,a.chuangyeanli_photo as chuangyeanliPhoto
+        ,a.chuangyeanli_video as chuangyeanliVideo
+        ,a.chuangyeanli_content as chuangyeanliContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChuangyeanliView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM chuangyeanli  a
+
+        <where>
+            <if test=" params.chuangyeanliName != '' and params.chuangyeanliName != null and params.chuangyeanliName != 'null' ">
+                and a.chuangyeanli_name like CONCAT('%',#{params.chuangyeanliName},'%')
+            </if>
+            <if test="params.leixTypes != null">
+                and a.leix_types = #{params.leixTypes}
+            </if>
+            <if test=" params.chuangyeanliVideo != '' and params.chuangyeanliVideo != null and params.chuangyeanliVideo != 'null' ">
+                and a.chuangyeanli_video like CONCAT('%',#{params.chuangyeanliVideo},'%')
+            </if>
+            <if test=" params.chuangyeanliContent != '' and params.chuangyeanliContent != null and params.chuangyeanliContent != 'null' ">
+                and a.chuangyeanli_content like CONCAT('%',#{params.chuangyeanliContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
